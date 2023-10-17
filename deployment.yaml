@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "4"
+  creationTimestamp: "2023-10-14T16:40:25Z"
+  generation: 5
+  labels:
+      app: nodejs-app-deployment
+  name: nodejs-app-deployment
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+        - name: nodejs-app-container
+          image: 759979662045.dkr.ecr.eu-north-1.amazonaws.com/elastisysrepo:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080 
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: "2023-10-14T16:40:25Z"
+  labels:
+    app: nodejs-app-service
+  name: nodejs-app-service
+  namespace: default
+spec:
+  selector:
+    app: nodejs-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080 
+  type: LoadBalancer 
